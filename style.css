@@ -1,0 +1,64 @@
+html
+{ 
+    height: 100%; 
+}
+
+*
+{
+    margin: 0;
+    padding: 0;
+}
+
+body
+{
+    /* background-color: darkgrey; */
+    background-color: rgb(50, 50, 65);
+    min-height: 100%;
+    position: relative;
+}
+
+#centered5050Container
+{
+    width: 50%;
+    height: 50%;
+
+    position: absolute;
+    left: 50%;
+    margin-left: calc(-25% - 10px);
+    /* top: 50%; */
+
+    padding: 10px;
+
+    /* margin-top: -25%; */
+}
+
+#elements
+{
+    width: 50%;
+    height: 50%;
+
+    position: absolute;
+    left: 50%;
+    margin-left: calc(-25% - 10px);
+    top: 50%;
+    margin-top: calc(-25vh - 10px);
+
+    padding: 10px;
+    background-color: black;
+    /* background-color:red; */
+}
+
+/*
+* Problem: the position of the elements is determined by the height of the heighest element (same as the Java one).
+           This means that if the highest element is removed, all elements shift upward. For some sorting algorithms 
+           this behaviour will cause significant graphical disturbance.
+*/
+.element
+{
+    background-color: lightgrey;
+    display: inline-block;
+    /* float: left; */
+
+    /* position: relative; */
+    /* bottom: 0; */
+}
