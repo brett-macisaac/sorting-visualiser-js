@@ -1,7 +1,7 @@
 :root
 {
     --colour-page: rgb(50, 50, 65);
-    --colour-element-container: rgb(25, 25, 35);
+    --colour-element-container: rgb(20, 20, 30);
     --colour-element: rgb(175, 175, 175);
 }
 
@@ -24,21 +24,6 @@ body
     position: relative;
 }
 
-#centered5050Container
-{
-    width: 50%;
-    height: 50%;
-
-    position: absolute;
-    left: 50%;
-    margin-left: calc(-25% - 10px);
-    /* top: 50%; */
-
-    padding: 10px;
-
-    /* margin-top: -25%; */
-}
-
 #elements
 {
     width: 80%;
@@ -46,13 +31,13 @@ body
 
     position: absolute;
     left: 50%;
-    margin-left: calc(-40% - 10px);
+    margin-left: calc(-40% - 25px);
     top: 50%;
-    margin-top: calc(-25vh - 10px);
+    margin-top: calc(-25vh - 25px);
+    padding: 25px;
 
-    padding: 10px;
     background-color: var(--colour-element-container);
-    /* background-color:red; */
+    border-radius: 15px;
 }
 
 /*
@@ -67,7 +52,7 @@ body
     position: absolute;
     bottom: 0;
 
-    border-radius: 3px;
+    /* border-radius: 3px; */
 }
 
 .elementWrapper
@@ -76,4 +61,36 @@ body
     float: left;
 
     height: 100%;
+}
+
+#btnSort
+{
+    width: 75pt;
+}
+
+#btnStep
+{
+    width: 75pt;
+}
+
+#btnShuffle
+{
+    width: 100pt;
+}
+
+button
+{
+    height: 40pt;
+
+    font-size: 20pt;
+    color: var(--colour-element);
+
+    position: relative;
+
+    background-color: var(--colour-element-container);
+
+    border-style: none;
+    border-radius: 5pt;
+
+    margin: 20px;
 }
