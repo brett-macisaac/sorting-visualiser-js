@@ -1,3 +1,10 @@
+:root
+{
+    --colour-page: rgb(50, 50, 65);
+    --colour-element-container: rgb(25, 25, 35);
+    --colour-element: rgb(175, 175, 175);
+}
+
 html
 { 
     height: 100%; 
@@ -12,7 +19,7 @@ html
 body
 {
     /* background-color: darkgrey; */
-    background-color: rgb(50, 50, 65);
+    background-color: var(--colour-page);
     min-height: 100%;
     position: relative;
 }
@@ -34,17 +41,17 @@ body
 
 #elements
 {
-    width: 50%;
+    width: 80%;
     height: 50%;
 
     position: absolute;
     left: 50%;
-    margin-left: calc(-25% - 10px);
+    margin-left: calc(-40% - 10px);
     top: 50%;
     margin-top: calc(-25vh - 10px);
 
     padding: 10px;
-    background-color: black;
+    background-color: var(--colour-element-container);
     /* background-color:red; */
 }
 
@@ -55,10 +62,18 @@ body
 */
 .element
 {
-    background-color: lightgrey;
-    display: inline-block;
-    /* float: left; */
+    background-color: var(--colour-element);
 
-    /* position: relative; */
-    /* bottom: 0; */
+    position: absolute;
+    bottom: 0;
+
+    border-radius: 3px;
+}
+
+.elementWrapper
+{
+    position: relative;
+    float: left;
+
+    height: 100%;
 }

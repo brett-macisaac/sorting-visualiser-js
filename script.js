@@ -9,7 +9,7 @@ console.log("Hello world!");
 function init()
 {
     console.log("Hello world!");
-    CreateElements(25);
+    CreateElements(50);
 }
 //window.onload = init; // Call init when the browser loads the window.
 init();
@@ -69,6 +69,10 @@ function CreateElements(aNumElements)
     // Add the elements to lElements.
     for (let i = 0; i < aNumElements; ++i)
     {
+        let lElementWrapper = document.createElement("div");
+        lElementWrapper.setAttribute("class", "elementWrapper");
+        lElementWrapper.style.width = `${lElementWidth}px`;
+
         let lElement = document.createElement("div");
 
         lElement.setAttribute("class", "element");
@@ -80,7 +84,7 @@ function CreateElements(aNumElements)
         lElement.style.width = `${lElementWidth}px`;
 
         // Add lElement to lElements.
-        lElements.appendChild(lElement);
+        lElements.appendChild(lElementWrapper).appendChild(lElement);
     }
 
 
