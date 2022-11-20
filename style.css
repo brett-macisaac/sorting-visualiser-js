@@ -78,14 +78,15 @@ body
     width: 100pt;
 }
 
-button
+.uiTextElement
+{
+    color: var(--colour-element);
+    font-size: 20pt;
+}
+
+.uiTextContainer
 {
     height: 40pt;
-
-    font-size: 20pt;
-    color: var(--colour-element);
-
-    position: relative;
 
     background-color: var(--colour-element-container);
 
@@ -93,4 +94,12 @@ button
     border-radius: 5pt;
 
     margin: 20px;
+}
+
+label.uiTextElement
+{
+    display: inline-block;
+    vertical-align: top;
+
+    padding: 0 20pt 0 20pt;
 }

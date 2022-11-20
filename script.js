@@ -1,4 +1,8 @@
 
+import utils from "./utils.js";
+import Elements from "./Elements.js";
+import sorters from "./sorters.js";
+
 /*
 * This function is called when the browser loads the window.
 * It performs initial actions that must be made when the web app runs.
@@ -8,10 +12,35 @@ function init()
     document.getElementById("btnSort").onclick = SortElements;
     document.getElementById("btnShuffle").onclick = ShuffleElements;
 
-    CreateElements(100);
+    CreateElements(25);
+
+    PopulateComboBox();
 }
 window.onload = init; // Call init when the browser loads the window.
 //init();
+
+
+// Globals (X) =========================================================================================================
+
+/*
+* Colours which define the possible colours of the elements.
+*/
+const gElementColours = 
+{
+    default: "#",  // The elements' default colour.
+    compared: "#", // The colour of the current two elements being compared.
+    swapped: "#",  // The colour of the current two elements that have just been swapped.
+    sorted: "#"    // If an element has been placed into its sorted position, it takes this colour.
+};
+
+//const gElements = document.getElementsByClassName("element");
+
+const gElements = new Elements(document.getElementsByClassName("element"), document.getElementById("btnStep"), 
+                               document.getElementById("chkStep"));
+
+const gChkAscending = document.getElementById("chkAscending");
+
+const gCmbSorters = document.getElementById("cmbSorters");
 
 
 // Auxiliaries (X) =====================================================================================================
@@ -80,7 +109,7 @@ function CreateElements(aNumElements)
         lElement.setAttribute("class", "element");
 
         // Set lElement's height to a random proportion of lElements' height (between 1% and 100%). 
-        lElement.style.height = `${Math.floor((GetRandom(1, 100) / 100) * lElementsHeight)}px`;
+        lElement.style.height = `${Math.floor((utils.GetRandom(1, 100) / 100) * lElementsHeight)}px`;
 
         // Set lElement's width.
         lElement.style.width = `${lElementWidth}px`;
@@ -92,58 +121,67 @@ function CreateElements(aNumElements)
 
 }
 
+function PopulateComboBox()
+{
+    Object.keys(sorters).forEach(sorter =>
+        {
+            const lOption = document.createElement("option");
+
+            lOption.textContent = sorter;
+
+            gCmbSorters.appendChild(lOption);
+            //gCmbSorters.appendChild(document.createElement("option").setAttribute("innerHTML", sorter));
+        });
+}
+
 /* Auxiliary of init
 * Begins the sorting process.
 */
 async function SortElements()
 {
-    document.getElementById("btnSort").disabled = true;
-    document.getElementById("btnShuffle").disabled = true;
+    SetDisabledSortShuffleButtons(true);
 
-    const lElements = document.getElementsByClassName("element");
+    //const lElements = document.getElementsByClassName("element");
 
-    for (let lIndexUnsortedUpper = lElements.length - 1; lIndexUnsortedUpper > 0; --lIndexUnsortedUpper)
-    {
-        for (let i = 1; i <= lIndexUnsortedUpper; ++i)
-        {
-            if (lElements[i - 1].clientHeight > lElements[i].clientHeight)
-            {
-                SwapElements(lElements[i - 1], lElements[i]);
-                await sleep(1);
-            }
-        }
-    }
+    console.log("Sorter Name: " + gCmbSorters.options[gCmbSorters.selectedIndex].text)
 
-    document.getElementById("btnSort").disabled = false;
-    document.getElementById("btnShuffle").disabled = false;
+    await gElements.Sort(sorters[gCmbSorters.options[gCmbSorters.selectedIndex].text], gChkAscending.checked);
+
+    // for (let lIndexUnsortedUpper = gElements.length - 1; lIndexUnsortedUpper > 0; --lIndexUnsortedUpper)
+    // {
+    //     for (let i = 1; i <= lIndexUnsortedUpper; ++i)
+    //     {
+    //         if (gElements[i - 1].clientHeight > gElements[i].clientHeight)
+    //         {
+    //             SwapElements(gElements[i - 1], gElements[i]);
+    //             await utils.sleep(1);
+    //         }
+    //     }
+    // }
+
+    SetDisabledSortShuffleButtons(false);
 }
 
 /* Auxiliary of init
 * Shuffles the elements.
 */
-function ShuffleElements()
+async function ShuffleElements()
 {
-    const lElements = document.getElementsByClassName("element");
+    SetDisabledSortShuffleButtons(true);
 
-    for (let i = lElements.length - 1; i > 0; --i)
-    {
-        const lIndexRandom = GetRandom(0, i);
+    await gElements.Shuffle();
 
-        SwapElements(lElements[i], lElements[lIndexRandom]);
-    }
+    // const lElements = document.getElementsByClassName("element");
 
-}
+    // for (let i = lElements.length - 1; i > 0; --i)
+    // {
+    //     const lIndexRandom = utils.GetRandom(0, i);
 
-/* Auxiliary of CreateElements, ShuffleElements
-* This function returns a random number between aMin and aMax (inclusive of both, i.e. [aMin, aMax]).
+    //     SwapElements(lElements[i], lElements[lIndexRandom]);
+    //     await utils.sleep(1);
+    // }
 
-* Parameters:
-    > aMin: the minimum value of the random number.
-    > aMax: the maximum value of the random number.
-*/
-function GetRandom(aMin, aMax)
-{
-    return Math.floor(Math.random() * (aMax - aMin + 1)) + aMin;
+    SetDisabledSortShuffleButtons(false);
 }
 
 /* Auxiliary of
@@ -158,16 +196,8 @@ function SwapElements(aElement1, aElement2)
     aElement2.style.height = lHeight1;
 }
 
-function sleep(aSleepDuration)
+function SetDisabledSortShuffleButtons(aDisabled)
 {
-    if (typeof aSleepDuration !== 'number')
-    {
-        console.log("aSleepDuration must be a number.");
-    } 
-    else if (aSleepDuration < 0)
-    {
-        console.log("aSleepDuration can't be negative.");
-    }
-
-    return new Promise (resolve => setTimeout(resolve, aSleepDuration));
+    document.getElementById("btnSort").disabled = aDisabled;
+    document.getElementById("btnShuffle").disabled = aDisabled;
 }

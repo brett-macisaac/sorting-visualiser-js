@@ -6,18 +6,30 @@
         <title>Sort Visualiser</title>
         <meta charset = "utf-8" />
         <link rel = "stylesheet" href = "style.css" />
-        <script defer src = "./script.js"></script>
+        <script defer src = "./script.js" type = "module"></script>
 
     </head>
 
     <body>
 
         <!-- The container that holds the elements to be sorted -->
-        <div id = "elements">
-        </div>
-        <button type = "button" id = "btnSort">Sort</button>
-        <button type = "button" id = "btnStep">Step</button>
-        <button type = "button" id = "btnShuffle">Shuffle</button>
+        <div id = "elements"></div>
+
+        <button type = "button" id = "btnSort" class = "uiTextElement uiTextContainer">Sort</button>
+        <button type = "button" id = "btnStep" class = "uiTextElement uiTextContainer">Step</button>
+        <button type = "button" id = "btnShuffle" class = "uiTextElement uiTextContainer">Shuffle</button>
+
+        <label for="chkStep" class = "uiTextElement uiTextContainer">
+            Step
+            <input type="checkbox" id = "chkStep">
+        </label>
+
+        <label for="chkAscending" class = "uiTextElement uiTextContainer">
+            Ascending
+            <input type="checkbox" id = "chkAscending" checked>
+        </label>
+
+        <select id = "cmbSorters"></select>
 
     </body>
 
