@@ -426,6 +426,10 @@ async function MergeSort(aElements, aAscending)
             
         }
 
+        // Change the colours of the two segments.
+        aElements.SetElementRangeColour(aStart, aMid, lColourLower, false);
+        await aElements.SetElementRangeColour(aMid + 1, aEnd, lColourUpper, true);
+
         // Copy the values from lMerger into the appropriate indexes of aElements.
         for (let i = aStart; i <= aEnd; ++i) 
         { 
@@ -494,6 +498,9 @@ async function MergeSortIterative(aElements, aAscending)
         // Change the colours of the two segments.
         aElements.SetElementRangeColour(aStart, aMid, lColourLower, false);
         await aElements.SetElementRangeColour(aMid + 1, aEnd, lColourUpper, true);
+
+        // Remove the colours.
+        await aElements.SetElementRangeColour(aStart, aEnd, aElements.colours.default, true);
         
         // Create a temporary container to house the merged segment.
         const lSizeOfMerger = aEnd - aStart + 1; // Size of merged segment.
@@ -535,6 +542,10 @@ async function MergeSortIterative(aElements, aAscending)
             }
             
         }
+
+        // Change the colours of the two segments.
+        aElements.SetElementRangeColour(aStart, aMid, lColourLower, false);
+        await aElements.SetElementRangeColour(aMid + 1, aEnd, lColourUpper, true);
 
         // Copy the values from lMerger into the appropriate indexes of aElements.
         for (let i = aStart; i <= aEnd; ++i) 

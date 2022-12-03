@@ -37,7 +37,7 @@ body
     /* Centre horizontally. */
     margin: auto;
     
-    margin-bottom: 3vh;
+    margin-bottom: 4vh;
 
     /* Add space between edge of the container and its elements. */
     padding: 25px;
@@ -56,8 +56,8 @@ body
     /* Centre horizontally. */
     margin: auto;
 
-    margin-top: 3vh;
-    margin-bottom: 3vh;
+    margin-top: 4vh;
+    margin-bottom: 4vh;
 
     /* Add space between edge of the container and its elements. */
     padding: 20px;
@@ -76,7 +76,7 @@ body
     /* Centre horizontally. */
     margin: auto;
 
-    margin-bottom: 3vh;
+    margin-bottom: 4vh;
 
     /* Add space between edge of the container and its elements. */
     padding: 20px;
@@ -95,7 +95,7 @@ body
     /* Centre horizontally. */
     margin: auto;
 
-    margin-bottom: 3vh;
+    margin-bottom: 4vh;
 
     /* Add space between edge of the container and its elements. */
     padding: 20px;
@@ -106,19 +106,12 @@ body
     border-radius: 15px;
 }
 
-/*
-* Problem: the position of the elements is determined by the height of the heighest element (same as the Java one).
-           This means that if the highest element is removed, all elements shift upward. For some sorting algorithms 
-           this behaviour will cause significant graphical disturbance.
-*/
 .element
 {
     background-color: var(--colour-element);
 
     position: absolute;
     bottom: 0;
-
-    /* border-radius: 3px; */
 }
 
 .elementWrapper
@@ -129,38 +122,26 @@ body
     height: 100%;
 }
 
-#btnSort
-{
-    width: 75pt;
-}
-
-#btnStep
-{
-    width: 75pt;
-}
-
-#btnShuffle
-{
-    width: 100pt;
-}
-
 .uiTextElement
 {
     color: var(--colour-element);
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 19pt;
+    font-weight:bold;
 
     text-align: center;
 }
 
 .uiTextContainer
 {
-    height: 40pt;
+    height: fit-content;
 
     background-color: var(--colour-page);
 
     border-style: none;
     border-radius: 5pt;
+
+    padding: 10px;
 
     margin-right: 20px;
 }
@@ -169,15 +150,16 @@ label.uiTextElement
 {
     display: inline-block;
     vertical-align: top;
+    text-align: center;
 
-    padding: 0 20pt 0 20pt;
+    /* padding: 0 20pt 0 20pt; */
 }
 
 #cmbSorters
 {
     font-size: 17pt;
 
-    padding: 0 5pt 0 20pt;
+    /* padding: 0 5pt 0 20pt; */
 
     text-align: center;
 
@@ -217,4 +199,16 @@ div.stat
 #stats div:last-child
 {
     margin-right: 0;
+}
+
+#footer 
+{
+    /* position: absolute;
+    left: 0;
+    bottom: 0; */
+    width: 100%;
+    padding: 20px;
+    background-color: var(--colour-element-container);
+    color: var(--colour-element);
+    text-align: center;
 }
