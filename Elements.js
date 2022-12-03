@@ -3,21 +3,24 @@ import utils from "./utils.js";
 
 class Elements
 {
-    constructor(aElements, aBtnStep, aChkStep)
+    constructor(aElements, aBtnStep, aChkStep, aRngSpeed, aLblAccesses, aLblWrites)
     {
         this._elements = aElements;
         this._btnStep = aBtnStep;
         this._chkStep = aChkStep;
+        this._rngSpeed = aRngSpeed;
+        this._lblAccesses = aLblAccesses;
+        this._lblWrites = aLblWrites;
 
         // A stand-in value for a scroll bar that will eventually be used to determine the sleep length.
         this._sleepLength = 1;
 
         this._elementColours = 
         {
-            default: "#",  // The elements' default colour.
-            compared: "#", // The colour of the current two elements being compared.
-            swapped: "#",  // The colour of the current two elements that have just been swapped.
-            sorted: "#"    // If an element has been placed into its sorted position, it takes this colour.
+            default:  "#b9b9b9",  // The elements' default colour.
+            compared: "#cc241f", // The colour of the current two elements being compared.
+            swapped:  "#cf7622",  // The colour of the current two elements that have just been swapped.
+            sorted:   "#36bd1b"   // If an element has been placed into its sorted position, it takes this colour.
         };
     }
 
@@ -30,20 +33,9 @@ class Elements
     */
     async Sort(aSorter, aAscending)
     {
+        this.ResetAccessesAndWrites();
+
         await aSorter(this, aAscending);
-
-        // for (let lIndexUnsortedUpper = this._elements.length - 1; lIndexUnsortedUpper > 0; --lIndexUnsortedUpper)
-        // {
-        //     for (let i = 1; i <= lIndexUnsortedUpper; ++i)
-        //     {
-        //         if (this._elements[i - 1].clientHeight > this._elements[i].clientHeight)
-        //         {
-        //             this.SwapElements(i - 1, i);
-        //             await this.SleepOrStep();
-        //         }
-        //     }
-        // }
-
     }
 
     async Shuffle()
@@ -52,40 +44,43 @@ class Elements
         {
             const lIndexRandom = utils.GetRandom(0, i);
 
-            this.SwapElements(i, lIndexRandom, false);
+            this.Swap(i, lIndexRandom, false);
             await utils.SleepFor(this._sleepLength);
         }
 
+        this.ResetElementsColour();
+
+        this.ResetAccessesAndWrites()
     }
 
     async Compare(aIndex1, aCompOp, aIndex2)
     {
         // Set comparison colours.
-        // await this.SleepOrStep()
+        await this.SetElementsColourTemporarily(aIndex1, aIndex2, this._elementColours.compared);
 
         if (aCompOp === utils.CompOps.E)
         {
-            return this._elements[aIndex1].clientHeight === this._elements[aIndex2].clientHeight;
+            return this.GetClientHeight(aIndex1) === this.GetClientHeight(aIndex2);
         }
         else if (aCompOp === utils.CompOps.NE)
         {
-            return this._elements[aIndex1].clientHeight !== this._elements[aIndex2].clientHeight;
+            return this.GetClientHeight(aIndex1) !== this.GetClientHeight(aIndex2);
         }
         else if (aCompOp === utils.CompOps.G)
         {
-            return this._elements[aIndex1].clientHeight > this._elements[aIndex2].clientHeight;
+            return this.GetClientHeight(aIndex1) > this.GetClientHeight(aIndex2);
         }
         else if (aCompOp === utils.CompOps.L)
         {
-            return this._elements[aIndex1].clientHeight < this._elements[aIndex2].clientHeight;
+            return this.GetClientHeight(aIndex1) < this.GetClientHeight(aIndex2);
         }
         else if (aCompOp === utils.CompOps.GE)
         {
-            return this._elements[aIndex1].clientHeight >= this._elements[aIndex2].clientHeight;
+            return this.GetClientHeight(aIndex1) >= this.GetClientHeight(aIndex2);
         }
         else if (aCompOp === utils.CompOps.LE)
         {
-            return this._elements[aIndex1].clientHeight >= this._elements[aIndex2].clientHeight;
+            return this.GetClientHeight(aIndex1) <= this.GetClientHeight(aIndex2);
         }
         else
         {
@@ -95,13 +90,105 @@ class Elements
 
     }
 
-    async SwapElements(aIndex1, aIndex2, aSleepOrStep = true)
+    async CompareValue(aIndex, aCompOp, aValue)
     {
-        const lHeight1 = this._elements[aIndex1].style.height;
+        // Set comparison colours.
+        await this.SetElementColourTemporarily(aIndex, this._elementColours.compared);
 
-        this._elements[aIndex1].style.height = this._elements[aIndex2].style.height;
+        if (aCompOp === utils.CompOps.E)
+        {
+            return this.GetClientHeight(aIndex) === aValue;
+        }
+        else if (aCompOp === utils.CompOps.NE)
+        {
+            return this.GetClientHeight(aIndex) !== aValue;
+        }
+        else if (aCompOp === utils.CompOps.G)
+        {
+            return this.GetClientHeight(aIndex) > aValue;
+        }
+        else if (aCompOp === utils.CompOps.L)
+        {
+            return this.GetClientHeight(aIndex) < aValue;
+        }
+        else if (aCompOp === utils.CompOps.GE)
+        {
+            return this.GetClientHeight(aIndex) >= aValue;
+        }
+        else if (aCompOp === utils.CompOps.LE)
+        {
+            return this.GetClientHeight(aIndex) >= aValue;
+        }
+        else
+        {
+            console.log("The value of aCompOp doesn't correspond to a valid comparison operator.");
+            return false;
+        }
 
-        this._elements[aIndex2].style.height = lHeight1;
+    }
+
+    async Swap(aIndex1, aIndex2, aSleepOrStep = true)
+    {
+        const lHeight1 = this.GetHeight(aIndex1);
+
+        this.SetHeight(aIndex1, this.GetHeight(aIndex2));
+
+        this.SetHeight(aIndex2, lHeight1);
+
+        if (aSleepOrStep)
+            await this.SetElementsColourTemporarily(aIndex1, aIndex2, this._elementColours.swapped);
+    }
+
+    async SetElementsColourTemporarily(aIndex1, aIndex2, aColour)
+    {
+        this.SetElementsColour(aIndex1, aIndex2, aColour);
+
+        await this.SleepOrStep();
+
+        this.SetElementsColour(aIndex1, aIndex2, this._elementColours.default);
+    }
+
+    async SetElementColourTemporarily(aIndex, aColour)
+    {
+        await this.SetElementColour(aIndex, aColour, true);
+
+        this.SetElementColour(aIndex, this._elementColours.default);
+    }
+
+    ResetElementsColour()
+    {
+        this.SetElementRangeColour(0, this._elements.length - 1, this._elementColours.default);
+    }
+
+    async SetElementRangeColour(aIndexStart, aIndexEnd, aColour, aSleepOrStep = false)
+    {
+        for (let i = aIndexStart; i <= aIndexEnd; ++i)
+            this.SetElementColour(i, aColour, false);
+
+        if (aSleepOrStep)
+            await this.SleepOrStep();
+    }
+
+    async SetElementsColour(aIndex1, aIndex2, aColour, aSleepOrStep = false)
+    {
+        this.SetElementColour(aIndex1, aColour);
+        this.SetElementColour(aIndex2, aColour);
+
+        if (aSleepOrStep)
+            await this.SleepOrStep();
+    }
+
+    async SetElementSorted(aIndex, aSleepOrStep = false)
+    {
+        this.SetElementColour(aIndex, this._elementColours.sorted);
+
+        if (aSleepOrStep)
+            await this.SleepOrStep();
+    }
+
+    async SetElementColour(aIndex, aColour, aSleepOrStep = false)
+    {
+        this._elements[aIndex].style.background = aColour;
 
         if (aSleepOrStep)
             await this.SleepOrStep();
@@ -112,12 +199,67 @@ class Elements
         if (this._chkStep.checked)
             return utils.SleepUntilClicks([this._btnStep, this._chkStep]);
         else
-            return utils.SleepFor(this._sleepLength);
+            return utils.SleepFor(Number(this._rngSpeed.value));
+    }
+
+    IncrementAccesses()
+    {
+        let lCurrentValue = Number(this._lblAccesses.innerText);
+
+        ++lCurrentValue;
+
+        this._lblAccesses.innerText = lCurrentValue;
+    }
+
+    IncrementWrites()
+    {
+        let lCurrentValue = Number(this._lblWrites.innerText);
+
+        ++lCurrentValue;
+
+        this._lblWrites.innerText = lCurrentValue;
+    }
+
+    ResetAccessesAndWrites()
+    {
+        this._lblAccesses.innerText = 0;
+        this._lblWrites.innerText = 0;
+    }
+
+    GetClientHeight(aIndex)
+    {
+        this.IncrementAccesses();
+
+        return this._elements[aIndex].clientHeight;
+    }
+
+    GetHeight(aIndex)
+    {
+        this.IncrementAccesses();
+
+        return this._elements[aIndex].style.height;
+    }
+
+    SetHeight(aIndex, aValue)
+    {
+        this.IncrementWrites();
+
+        this._elements[aIndex].style.height = aValue;
+    }
+
+    get colours()
+    {
+        return this._elementColours;
     }
 
     get length()
     {
         return this._elements.length;
+    }
+
+    get elements()
+    {
+        return this._elements;
     }
 
 }

@@ -11,10 +11,30 @@ function init()
 {
     document.getElementById("btnSort").onclick = SortElements;
     document.getElementById("btnShuffle").onclick = ShuffleElements;
+    document.getElementById("rngElements").onchange = SetNumElements;
 
-    CreateElements(25);
+    CreateElements(Number(document.getElementById("rngElements").value));
 
     PopulateComboBox();
+
+    const Inner = async () =>
+    {
+        console.log("b");
+        //await utils.SleepFor(0);
+        await new Promise((resolve) => { resolve(""); });
+        console.log("e")
+    };
+
+    const Outer = () =>
+    {
+        console.log("a");
+        Inner();
+        console.log("c");
+    }
+
+    //https://stackoverflow.com/questions/68714049/does-await-in-main-program-make-the-js-call-stack-empty-and-thus-give-opportunit
+    Outer();
+    console.log("d");
 }
 window.onload = init; // Call init when the browser loads the window.
 //init();
@@ -22,25 +42,24 @@ window.onload = init; // Call init when the browser loads the window.
 
 // Globals (X) =========================================================================================================
 
-/*
-* Colours which define the possible colours of the elements.
-*/
-const gElementColours = 
-{
-    default: "#",  // The elements' default colour.
-    compared: "#", // The colour of the current two elements being compared.
-    swapped: "#",  // The colour of the current two elements that have just been swapped.
-    sorted: "#"    // If an element has been placed into its sorted position, it takes this colour.
-};
-
-//const gElements = document.getElementsByClassName("element");
-
 const gElements = new Elements(document.getElementsByClassName("element"), document.getElementById("btnStep"), 
-                               document.getElementById("chkStep"));
+                               document.getElementById("chkStep"), document.getElementById("rngSpeed"),
+                               document.querySelector("div#statAccesses > span"), 
+                               document.querySelector("div#statWrites > span"));
+
+// The original width (in px) of the elements' container object. This should be retained due to the user's ability to
+// alter the number of elements, which may alter the container's width.
+const gWidthElementsOriginal = window.getComputedStyle(document.getElementById("elements")).width;
+
+const gBtnSort = document.getElementById("btnSort");
+
+const gBtnShuffle = document.getElementById("btnShuffle");
 
 const gChkAscending = document.getElementById("chkAscending");
 
 const gCmbSorters = document.getElementById("cmbSorters");
+
+const gRngNumElements = document.getElementById("rngElements");
 
 
 // Auxiliaries (X) =====================================================================================================
@@ -60,8 +79,10 @@ function CreateElements(aNumElements)
         return;
     }
 
+    console.log(aNumElements);
+
     // The min and max number of elements: (lMinElements, lMaxElements].
-    const lMinElements = 1;
+    const lMinElements = 10;
     const lMaxElements = 1000;
 
     // Validate aNumElements's size.
@@ -80,20 +101,25 @@ function CreateElements(aNumElements)
 
     // console.log(`Container width: ${lElementsStyle.width}.`);
     // console.log(`Container height: ${lElementsStyle.height}.`);
-    // console.log(lElements);
+    console.log(lElements);
 
     const lElementsWidth = Number(lElementsStyle.width.slice(0, lElementsStyle.width.length - 2));
 
     const lElementsHeight = Number(lElementsStyle.height.slice(0, lElementsStyle.height.length - 2));
 
     // The width of each element (integer value i.e. pixels).
-    const lElementWidth = Math.floor(lElementsWidth / aNumElements);
+    let lElementWidth = Math.floor(lElementsWidth / aNumElements);
+
+    if (lElementWidth === 0)
+    {
+        lElementWidth = 1;
+    }
 
     const lPaddingSides = 2 * Number(lElementsStyle.paddingLeft.slice(0, lElementsStyle.paddingLeft.length - 2));
 
     // Change lElements width so that it fits its elements exactly (make sure to update the left margin to re-centre it).
     lElements.style.width = `${lElementWidth * aNumElements}px`;
-    lElements.style.marginLeft = `-${(lElementWidth * aNumElements + lPaddingSides) / 2}px`;
+    //lElements.style.marginLeft = `-${(lElementWidth * aNumElements + lPaddingSides) / 2}px`;
 
     // console.log(`Element width: ${lElementWidth}.`);
 
@@ -121,6 +147,31 @@ function CreateElements(aNumElements)
 
 }
 
+function SetNumElements()
+{
+    // The number of elements that the user wants to create.
+    const lNewNum = Number(gRngNumElements.value);
+
+    // If the current number of elements is the same as that selected by the user, return.
+    if (lNewNum === gElements.length)
+        return;
+
+    // The container that holds the elements.
+    const lElements = document.getElementById("elements");
+
+    // Remove all children of lElements.
+    while(lElements.firstChild)
+        lElements.removeChild(lElements.firstChild);
+
+    // Reset the container's width.
+    lElements.style.width = gWidthElementsOriginal;
+
+    // Create the new elements according to the user's input.
+    CreateElements(Number(gRngNumElements.value));
+
+    // Note: the _elements field of gElements (of type HTMLCollection) updates itself automatically.
+}
+
 function PopulateComboBox()
 {
     Object.keys(sorters).forEach(sorter =>
@@ -139,7 +190,7 @@ function PopulateComboBox()
 */
 async function SortElements()
 {
-    SetDisabledSortShuffleButtons(true);
+    DisableUIForSorting(true);
 
     //const lElements = document.getElementsByClassName("element");
 
@@ -147,19 +198,7 @@ async function SortElements()
 
     await gElements.Sort(sorters[gCmbSorters.options[gCmbSorters.selectedIndex].text], gChkAscending.checked);
 
-    // for (let lIndexUnsortedUpper = gElements.length - 1; lIndexUnsortedUpper > 0; --lIndexUnsortedUpper)
-    // {
-    //     for (let i = 1; i <= lIndexUnsortedUpper; ++i)
-    //     {
-    //         if (gElements[i - 1].clientHeight > gElements[i].clientHeight)
-    //         {
-    //             SwapElements(gElements[i - 1], gElements[i]);
-    //             await utils.sleep(1);
-    //         }
-    //     }
-    // }
-
-    SetDisabledSortShuffleButtons(false);
+    DisableUIForSorting(false);
 }
 
 /* Auxiliary of init
@@ -167,37 +206,18 @@ async function SortElements()
 */
 async function ShuffleElements()
 {
-    SetDisabledSortShuffleButtons(true);
+    DisableUIForSorting(true);
 
     await gElements.Shuffle();
 
-    // const lElements = document.getElementsByClassName("element");
-
-    // for (let i = lElements.length - 1; i > 0; --i)
-    // {
-    //     const lIndexRandom = utils.GetRandom(0, i);
-
-    //     SwapElements(lElements[i], lElements[lIndexRandom]);
-    //     await utils.sleep(1);
-    // }
-
-    SetDisabledSortShuffleButtons(false);
+    DisableUIForSorting(false);
 }
 
-/* Auxiliary of
-* Swaps the heights of the given elements.
-*/
-function SwapElements(aElement1, aElement2)
+function DisableUIForSorting(aDisabled)
 {
-    const lHeight1 = aElement1.style.height;
-
-    aElement1.style.height = aElement2.style.height;
-
-    aElement2.style.height = lHeight1;
-}
-
-function SetDisabledSortShuffleButtons(aDisabled)
-{
-    document.getElementById("btnSort").disabled = aDisabled;
-    document.getElementById("btnShuffle").disabled = aDisabled;
+    gChkAscending.disabled = aDisabled;
+    gBtnSort.disabled = aDisabled;
+    gBtnShuffle.disabled = aDisabled;
+    gCmbSorters.disabled = aDisabled;
+    gRngNumElements.disabled = aDisabled;
 }

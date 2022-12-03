@@ -2,7 +2,12 @@
 {
     --colour-page: rgb(50, 50, 65);
     --colour-element-container: rgb(20, 20, 30);
-    --colour-element: rgb(175, 175, 175);
+    --colour-element: #cecece;
+    --colour-compared: #cf7622;
+    --colour-swapped: #cc241f;
+    --colour-sorted: #36bd1b;
+    --colour-sortindex: #0f5099;
+    --colour-merged: #5226a3;
 }
 
 html
@@ -27,16 +32,77 @@ body
 #elements
 {
     width: 80%;
-    height: 50%;
+    height: 50vh;
 
-    position: absolute;
-    left: 50%;
-    margin-left: calc(-40% - 25px);
-    top: 50%;
-    margin-top: calc(-25vh - 25px);
+    /* Centre horizontally. */
+    margin: auto;
+    
+    margin-bottom: 3vh;
+
+    /* Add space between edge of the container and its elements. */
     padding: 25px;
 
     background-color: var(--colour-element-container);
+
+    /* Curve the corners. */
+    border-radius: 15px;
+}
+
+#primaryControls
+{
+    width: fit-content;
+    height: fit-content;
+
+    /* Centre horizontally. */
+    margin: auto;
+
+    margin-top: 3vh;
+    margin-bottom: 3vh;
+
+    /* Add space between edge of the container and its elements. */
+    padding: 20px;
+
+    background-color: var(--colour-element-container);
+
+    /* Curve the corners. */
+    border-radius: 15px;
+}
+
+#secondaryControls
+{
+    width: fit-content;
+    height: fit-content;
+
+    /* Centre horizontally. */
+    margin: auto;
+
+    margin-bottom: 3vh;
+
+    /* Add space between edge of the container and its elements. */
+    padding: 20px;
+
+    background-color: var(--colour-element-container);
+
+    /* Curve the corners. */
+    border-radius: 15px;
+}
+
+#stats
+{
+    width: fit-content;
+    height: fit-content;
+
+    /* Centre horizontally. */
+    margin: auto;
+
+    margin-bottom: 3vh;
+
+    /* Add space between edge of the container and its elements. */
+    padding: 20px;
+
+    background-color: var(--colour-element-container);
+
+    /* Curve the corners. */
     border-radius: 15px;
 }
 
@@ -81,19 +147,22 @@ body
 .uiTextElement
 {
     color: var(--colour-element);
-    font-size: 20pt;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 19pt;
+
+    text-align: center;
 }
 
 .uiTextContainer
 {
     height: 40pt;
 
-    background-color: var(--colour-element-container);
+    background-color: var(--colour-page);
 
     border-style: none;
     border-radius: 5pt;
 
-    margin: 20px;
+    margin-right: 20px;
 }
 
 label.uiTextElement
@@ -102,4 +171,50 @@ label.uiTextElement
     vertical-align: top;
 
     padding: 0 20pt 0 20pt;
+}
+
+#cmbSorters
+{
+    font-size: 17pt;
+
+    padding: 0 5pt 0 20pt;
+
+    text-align: center;
+
+    margin-right: 0px;
+}
+
+#rngElements
+{
+    width: 400px;
+}
+
+div.uiTextContainer
+{
+    width: 250pt;
+}
+
+div.uiTextContainer > p
+{
+    float: left;
+}
+
+div.uiTextContainer > span
+{
+    font-weight: bold;
+}
+
+div.stat
+{
+    display: inline-block;
+}
+
+#secondaryControls label:last-child
+{
+    margin-right: 0;
+}
+
+#stats div:last-child
+{
+    margin-right: 0;
 }

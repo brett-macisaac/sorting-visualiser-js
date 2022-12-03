@@ -12,24 +12,56 @@
 
     <body>
 
+        <!-- The container that holds the 'primary' UI elements -->
+        <div id = "primaryControls">
+
+            <button type = "button" id = "btnSort" class = "uiTextElement uiTextContainer">Sort</button>
+            <button type = "button" id = "btnShuffle" class = "uiTextElement uiTextContainer">Shuffle</button>
+
+            <button type = "button" id = "btnStep" class = "uiTextElement uiTextContainer">Step</button>
+            <label for="chkStep" class = "uiTextElement uiTextContainer">
+                Step
+                <input type="checkbox" id = "chkStep">
+            </label>
+
+            <label for="chkAscending" class = "uiTextElement uiTextContainer">
+                Ascending
+                <input type="checkbox" id = "chkAscending" checked>
+            </label>
+
+            <select id = "cmbSorters" class = "uiTextElement uiTextContainer"></select>
+
+        </div>
+
         <!-- The container that holds the elements to be sorted -->
         <div id = "elements"></div>
 
-        <button type = "button" id = "btnSort" class = "uiTextElement uiTextContainer">Sort</button>
-        <button type = "button" id = "btnStep" class = "uiTextElement uiTextContainer">Step</button>
-        <button type = "button" id = "btnShuffle" class = "uiTextElement uiTextContainer">Shuffle</button>
+        <!-- The container that holds the 'secondary' UI elements -->
+        <div id = "secondaryControls">
 
-        <label for="chkStep" class = "uiTextElement uiTextContainer">
-            Step
-            <input type="checkbox" id = "chkStep">
-        </label>
+            <label for = "rngSpeed" class = "uiTextElement uiTextContainer">
+                Sort Speed
+                <input type = "range" id = "rngSpeed" min = "1" max = "1001" step = "10" value = "1" >
+            </label>
+    
+            <label for = "rngElements" class = "uiTextElement uiTextContainer">
+                # Elements
+                <input type = "range" id = "rngElements" min = "10" max = "1000" step = "5" value = "25" >
+            </label>
 
-        <label for="chkAscending" class = "uiTextElement uiTextContainer">
-            Ascending
-            <input type="checkbox" id = "chkAscending" checked>
-        </label>
+        </div>
 
-        <select id = "cmbSorters"></select>
+        <div id = "stats">
+            <div id = "statAccesses" class = "uiTextContainer stat">
+                <p class = "uiTextElement"># Accesses:&nbsp;</p>
+                <span class = "uiTextElement">0</span>
+            </div>
+    
+            <div id = "statWrites" class = "uiTextContainer stat">
+                <p class = "uiTextElement"># Writes:&nbsp;</p>
+                <span class = "uiTextElement">0</span>
+            </div>
+        </div>
 
     </body>
 

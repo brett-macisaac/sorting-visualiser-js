@@ -3,7 +3,7 @@ function SleepFor(aSleepDuration)
 {
     if (typeof aSleepDuration !== 'number')
     {
-        console.log("aSleepDuration must be a number.");
+        console.log("aSleepDuration must be a number, not " + typeof aSleepDuration);
     } 
     else if (aSleepDuration < 0)
     {
