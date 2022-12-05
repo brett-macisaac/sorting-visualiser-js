@@ -16,25 +16,6 @@ function init()
     CreateElements(Number(document.getElementById("rngElements").value));
 
     PopulateComboBox();
-
-    const Inner = async () =>
-    {
-        console.log("b");
-        //await utils.SleepFor(0);
-        await new Promise((resolve) => { resolve(""); });
-        console.log("e")
-    };
-
-    const Outer = () =>
-    {
-        console.log("a");
-        Inner();
-        console.log("c");
-    }
-
-    //https://stackoverflow.com/questions/68714049/does-await-in-main-program-make-the-js-call-stack-empty-and-thus-give-opportunit
-    Outer();
-    console.log("d");
 }
 window.onload = init; // Call init when the browser loads the window.
 //init();
@@ -103,25 +84,46 @@ function CreateElements(aNumElements)
     // console.log(`Container height: ${lElementsStyle.height}.`);
     console.log(lElements);
 
-    const lElementsWidth = Number(lElementsStyle.width.slice(0, lElementsStyle.width.length - 2));
+    // The dimensions of the container's content (i.e. not including padding or border).
+    let lElementsWidth, lElementsHeight;
 
-    const lElementsHeight = Number(lElementsStyle.height.slice(0, lElementsStyle.height.length - 2));
+    // Set the container's dimensions (see https://www.w3schools.com/cssref/css3_pr_box-sizing.php)
+    if (lElementsStyle.boxSizing === 'border-box')
+    {
+        // The horizontal (left and right) and vertical (top and bottom) padding of the container.
+        // note: left and right padding are assumed to be the same, as well as top and bottom.
+        const lPaddingHorizontal = 2 * Number(lElementsStyle.paddingLeft.slice(0, lElementsStyle.paddingLeft.length - 2));
+        const lPaddingVertical = 2 * Number(lElementsStyle.paddingTop.slice(0, lElementsStyle.paddingTop.length - 2));
+        
+        // Set container's dimensions (padding and border not included, as box-sizing isn't set to 'border-box').
+        lElementsWidth = Number(lElementsStyle.width.slice(0, lElementsStyle.width.length - 2)) - lPaddingHorizontal;
+        lElementsHeight = Number(lElementsStyle.height.slice(0, lElementsStyle.height.length - 2)) - lPaddingVertical;
+    }
+    else
+    {
+        // Set container's dimensions (padding and border not included, as box-sizing isn't set to 'border-box').
+        lElementsWidth = Number(lElementsStyle.width.slice(0, lElementsStyle.width.length - 2));
+        lElementsHeight = Number(lElementsStyle.height.slice(0, lElementsStyle.height.length - 2));
+    }
 
     // The width of each element (integer value i.e. pixels).
     let lElementWidth = Math.floor(lElementsWidth / aNumElements);
 
     if (lElementWidth === 0)
-    {
         lElementWidth = 1;
+
+    // Change lElements width so that it fits its elements exactly.
+    if (lElementsStyle.boxSizing === 'border-box')
+    {
+        const lPaddingHorizontal = 2 * Number(lElementsStyle.paddingLeft.slice(0, lElementsStyle.paddingLeft.length - 2));
+
+        // Because 'box-sizing: border-box' results in padding being included in the element's width, it must be added.
+        lElements.style.width = `${lElementWidth * aNumElements + lPaddingHorizontal}px`;
     }
-
-    const lPaddingSides = 2 * Number(lElementsStyle.paddingLeft.slice(0, lElementsStyle.paddingLeft.length - 2));
-
-    // Change lElements width so that it fits its elements exactly (make sure to update the left margin to re-centre it).
-    lElements.style.width = `${lElementWidth * aNumElements}px`;
-    //lElements.style.marginLeft = `-${(lElementWidth * aNumElements + lPaddingSides) / 2}px`;
-
-    // console.log(`Element width: ${lElementWidth}.`);
+    else
+    {
+        lElements.style.width = `${lElementWidth * aNumElements}px`;
+    }
 
     // Add the elements to lElements.
     for (let i = 0; i < aNumElements; ++i)

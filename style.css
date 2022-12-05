@@ -19,6 +19,9 @@ html
 {
     margin: 0;
     padding: 0;
+
+    /* Include padding to elements' dimensions */
+    box-sizing: border-box;
 }
 
 body
@@ -29,81 +32,38 @@ body
     position: relative;
 }
 
+#primaryControls
+{
+    margin-top: 4vh;
+}
+
 #elements
 {
     width: 80%;
     height: 50vh;
+}
 
-    /* Centre horizontally. */
-    margin: auto;
-    
-    margin-bottom: 4vh;
+.uiContainer
+{
+    width: fit-content;
+    height: fit-content;
+}
 
+.outerContainer
+{
     /* Add space between edge of the container and its elements. */
     padding: 25px;
 
-    background-color: var(--colour-element-container);
-
-    /* Curve the corners. */
-    border-radius: 15px;
-}
-
-#primaryControls
-{
-    width: fit-content;
-    height: fit-content;
-
     /* Centre horizontally. */
     margin: auto;
 
-    margin-top: 4vh;
+    /* Add space between the bottom of this container and the top of the next container. */
     margin-bottom: 4vh;
-
-    /* Add space between edge of the container and its elements. */
-    padding: 20px;
-
-    background-color: var(--colour-element-container);
 
     /* Curve the corners. */
     border-radius: 15px;
-}
-
-#secondaryControls
-{
-    width: fit-content;
-    height: fit-content;
-
-    /* Centre horizontally. */
-    margin: auto;
-
-    margin-bottom: 4vh;
-
-    /* Add space between edge of the container and its elements. */
-    padding: 20px;
 
     background-color: var(--colour-element-container);
-
-    /* Curve the corners. */
-    border-radius: 15px;
-}
-
-#stats
-{
-    width: fit-content;
-    height: fit-content;
-
-    /* Centre horizontally. */
-    margin: auto;
-
-    margin-bottom: 4vh;
-
-    /* Add space between edge of the container and its elements. */
-    padding: 20px;
-
-    background-color: var(--colour-element-container);
-
-    /* Curve the corners. */
-    border-radius: 15px;
 }
 
 .element
@@ -127,7 +87,7 @@ body
     color: var(--colour-element);
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 19pt;
-    font-weight:bold;
+    font-weight: bold;
 
     text-align: center;
 }
@@ -151,8 +111,6 @@ label.uiTextElement
     display: inline-block;
     vertical-align: top;
     text-align: center;
-
-    /* padding: 0 20pt 0 20pt; */
 }
 
 #cmbSorters
@@ -206,9 +164,15 @@ div.stat
     /* position: absolute;
     left: 0;
     bottom: 0; */
+
+    padding: 20px 20px 20px 20px;
     width: 100%;
-    padding: 20px;
+
+    /* Includes the padding to the element's specified width */
+    box-sizing: border-box;
+
     background-color: var(--colour-element-container);
     color: var(--colour-element);
+
     text-align: center;
 }

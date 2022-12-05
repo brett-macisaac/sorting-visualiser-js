@@ -3,8 +3,12 @@
 
     <head>
         
-        <title>Sort Visualiser</title>
+        <title>Sorting Visualiser</title>
+
         <meta charset = "utf-8" />
+        <meta name = "description" content = "An application that visualises many common sorting algorithms."/>
+	    <meta name = "keywords" content = "sort, sorting, visualise, visualize, visualisation, visualization, algorithm, algorithms, bubble sort, selection sort, insertion sort, quick sort, merge sort, heap sort"/>
+
         <link rel = "stylesheet" href = "style.css" />
         <script defer src = "./script.js" type = "module"></script>
 
@@ -13,7 +17,7 @@
     <body>
 
         <!-- The container that holds the 'primary' UI elements -->
-        <div id = "primaryControls">
+        <div id = "primaryControls" class = "outerContainer uiContainer">
 
             <button type = "button" id = "btnSort" class = "uiTextElement uiTextContainer">Sort</button>
             <button type = "button" id = "btnShuffle" class = "uiTextElement uiTextContainer">Shuffle</button>
@@ -34,10 +38,10 @@
         </div>
 
         <!-- The container that holds the elements to be sorted -->
-        <div id = "elements"></div>
+        <div id = "elements" class = "outerContainer"></div>
 
         <!-- The container that holds the 'secondary' UI elements -->
-        <div id = "secondaryControls">
+        <div id = "secondaryControls" class = "outerContainer uiContainer">
 
             <label for = "rngSpeed" class = "uiTextElement uiTextContainer">
                 Sort Speed
@@ -51,7 +55,7 @@
 
         </div>
 
-        <div id = "stats">
+        <div id = "stats" class = "outerContainer uiContainer">
             <div id = "statAccesses" class = "uiTextContainer stat">
                 <p class = "uiTextElement"># Accesses:&nbsp;</p>
                 <span class = "uiTextElement">0</span>
