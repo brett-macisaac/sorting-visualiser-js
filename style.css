@@ -24,6 +24,11 @@ html
     box-sizing: border-box;
 }
 
+a
+{
+    color: inherit;
+}
+
 body
 {
     /* background-color: darkgrey; */
@@ -98,12 +103,24 @@ body
 
     background-color: var(--colour-page);
 
-    border-style: none;
+    border: 1px solid var(--colour-page);
     border-radius: 5pt;
 
     padding: 10px;
 
     margin-right: 20px;
+}
+
+.interactable:hover
+{
+    border-color: var(--colour-element);
+}
+
+.interactable:active
+{
+    border-color: var(--colour-page);
+
+    background-color: var(--colour-element-container);
 }
 
 label.uiTextElement
@@ -165,7 +182,7 @@ div.stat
     left: 0;
     bottom: 0; */
 
-    padding: 20px 20px 20px 20px;
+    padding: 30px;
     width: 100%;
 
     /* Includes the padding to the element's specified width */
@@ -175,4 +192,9 @@ div.stat
     color: var(--colour-element);
 
     text-align: center;
+}
+
+.footerText
+{
+    font-size: 13pt;
 }
