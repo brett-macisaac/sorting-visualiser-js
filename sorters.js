@@ -600,6 +600,107 @@ async function MergeSortIterative(aElements, aAscending)
     aElements.SetElementRangeColour(0, aElements.length - 1, aElements.colours.sorted, true);
 }
 
+async function HeapSort(aElements, aAscending)
+{
+    const MaxHeapify = async (aElements, aIndexLastNode, aIndexParentNode) => 
+    {
+        // (a).
+        let lIndexMaxValue = aIndexParentNode;
+
+        // (b).
+        let lIndexLeftChild = 2 * aIndexParentNode + 1;
+        let lIndexRightChild = 2 * aIndexParentNode + 2;
+
+        if (lIndexLeftChild <= aIndexLastNode) // (c). If valid index.
+        {
+            // Reassign the max index if the left child's value is higher than that of its parent.
+            if (await aElements.Compare(lIndexLeftChild, utils.CompOps.G, lIndexMaxValue, true))
+            {
+                lIndexMaxValue = lIndexLeftChild;
+            }
+
+        }
+
+        if (lIndexRightChild <= aIndexLastNode) // (c). If valid index.
+        {
+            // Reassign the max index if the right child's value is higher than that of the current max.
+            if (await aElements.Compare(lIndexRightChild, utils.CompOps.G, lIndexMaxValue, true))
+            {
+                lIndexMaxValue = lIndexRightChild;
+            }
+            
+        }
+
+        if (lIndexMaxValue != aIndexParentNode) // (d).
+        {
+            // Swap value of current parent with that of its highest-value child (whose value is higher than its). 
+            await aElements.Swap(lIndexMaxValue, aIndexParentNode, true);
+
+            await MaxHeapify(aElements, aIndexLastNode, lIndexMaxValue); // (e).
+        }
+
+    }
+
+    const MinHeapify = async (aElements, aIndexLastNode, aIndexParentNode) => 
+    {
+        // (a).
+        let lIndexMinValue = aIndexParentNode;
+
+        // (b).
+        let lIndexLeftChild = 2 * aIndexParentNode + 1;
+        let lIndexRightChild = 2 * aIndexParentNode + 2;
+
+        if (lIndexLeftChild <= aIndexLastNode) // (c). If valid index.
+        {
+            // Reassign the max index if the left child's value is higher than that of its parent.
+            if (await aElements.Compare(lIndexLeftChild, utils.CompOps.L, lIndexMinValue, true))
+            {
+                lIndexMinValue = lIndexLeftChild;
+            }
+
+        }
+
+        if (lIndexRightChild <= aIndexLastNode) // (c). If valid index.
+        {
+            // Reassign the max index if the right child's value is higher than that of the current max.
+            if (await aElements.Compare(lIndexRightChild, utils.CompOps.L, lIndexMinValue, true))
+            {
+                lIndexMinValue = lIndexRightChild;
+            }
+            
+        }
+
+        if (lIndexMinValue != aIndexParentNode) // (d).
+        {
+            // Swap value of current parent with that of its highest-value child (whose value is higher than its). 
+            await aElements.Swap(lIndexMinValue, aIndexParentNode, true);
+
+            await MinHeapify(aElements, aIndexLastNode, lIndexMinValue); // (e).
+        }
+
+    }
+
+
+    let lIndexLowestParentNode = Math.floor((aElements.length / 2) - 1);
+
+    for (let i = lIndexLowestParentNode; i >= 0; --i)
+    {
+        aAscending ? await MaxHeapify(aElements, aElements.length - 1, i) : 
+                     await MinHeapify(aElements, aElements.length - 1, i);
+    }
+
+    for (let lIndexLastNode = aElements.length - 1; lIndexLastNode >= 0;)
+    {
+        await aElements.Swap(0, lIndexLastNode, true);
+        
+        await aElements.SetElementSorted(lIndexLastNode, true);
+
+        aAscending ? await MaxHeapify(aElements, --lIndexLastNode, 0) : 
+                     await MinHeapify(aElements, --lIndexLastNode, 0);     
+    }
+
+}
+
 const Sorters = 
 {
     "Bubble Sort": BubbleSort,
@@ -609,7 +710,8 @@ const Sorters =
     "Quick Sort": QuickSort,
     "Quick Sort (Random)": QuickSortRandomPivot,
     "Merge Sort": MergeSort,
-    "Merge Sort (Iterative)": MergeSortIterative
+    "Merge Sort (Iterative)": MergeSortIterative,
+    "Heap Sort": HeapSort
 };
 
 export { Sorters as default };

@@ -178,20 +178,24 @@ div.stat
 
 #footer 
 {
-    /* position: absolute;
-    left: 0;
-    bottom: 0; */
+    position: absolute;
+    bottom: 0;
 
     padding: 30px;
-    width: 100%;
 
-    /* Includes the padding to the element's specified width */
-    box-sizing: border-box;
+    height: 100px;
+    width: 100%;
 
     background-color: var(--colour-element-container);
     color: var(--colour-element);
 
     text-align: center;
+}
+
+#footerSpacer
+{
+    height: 100px;
+    margin-top: 8vh;
 }
 
 .footerText
