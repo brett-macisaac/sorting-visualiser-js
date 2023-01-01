@@ -218,14 +218,14 @@ async function QuickSort(aElements, aAscending)
             if (await aElements.Compare(lIndexPivot, lOperator, i))
             {
                 // Swap current value with the one at lIndexOfSort.
-                if (i != lIndexOfSort)
+                if (i !== lIndexOfSort)
                     await aElements.Swap(i, lIndexOfSort, true);
 
                 aElements.SetElementColour(lIndexOfSort, aElements.colours.default);
                 ++lIndexOfSort;
                 await aElements.SetElementColour(lIndexOfSort, lColourSortIndex, true);
             }
-            else if (i == lIndexOfSort)
+            else if (i === lIndexOfSort)
             {
                 await aElements.SetElementColour(lIndexOfSort, lColourSortIndex, true); 
             }
@@ -233,7 +233,7 @@ async function QuickSort(aElements, aAscending)
         }
 
         // Move the pivot's value into its sorted position.
-        if (lIndexOfSort != lIndexPivot)
+        if (lIndexOfSort !== lIndexPivot)
         { await aElements.Swap(lIndexOfSort, lIndexPivot, true); }
 
         // Indicate that the value at lIndexOfSort is in its sorted position.

@@ -17,16 +17,10 @@
     <body>
 
         <!-- The container that holds the 'primary' UI elements -->
-        <div id = "primaryControls" class = "outerContainer uiContainer">
+        <div id = "primaryControls" class = "outerContainer uiContainer controls">
 
             <button type = "button" id = "btnSort" class = "uiTextElement uiTextContainer interactable">Sort</button>
             <button type = "button" id = "btnShuffle" class = "uiTextElement uiTextContainer interactable">Shuffle</button>
-
-            <button type = "button" id = "btnStep" class = "uiTextElement uiTextContainer interactable">Step</button>
-            <label for="chkStep" class = "uiTextElement uiTextContainer interactable">
-                Step
-                <input type="checkbox" id = "chkStep">
-            </label>
 
             <label for="chkAscending" class = "uiTextElement uiTextContainer interactable">
                 Ascending
@@ -35,22 +29,28 @@
 
             <select id = "cmbSorters" class = "uiTextElement uiTextContainer interactable"></select>
 
+            <label for = "rngElements" class = "uiTextElement uiTextContainer interactable">
+                # Elements
+                <input type = "range" id = "rngElements" min = "10" max = "1000" step = "5" value = "25" >
+            </label>
+
         </div>
 
         <!-- The container that holds the elements to be sorted -->
         <div id = "elements" class = "outerContainer"></div>
 
         <!-- The container that holds the 'secondary' UI elements -->
-        <div id = "secondaryControls" class = "outerContainer uiContainer">
+        <div id = "secondaryControls" class = "outerContainer uiContainer controls">
+
+            <button type = "button" id = "btnStep" class = "uiTextElement uiTextContainer interactable">Step</button>
+            <label for="chkStep" class = "uiTextElement uiTextContainer interactable">
+                Step
+                <input type="checkbox" id = "chkStep">
+            </label>
 
             <label for = "rngSpeed" class = "uiTextElement uiTextContainer interactable">
                 Sort Speed
                 <input type = "range" id = "rngSpeed" min = "1" max = "1001" step = "10" value = "1" >
-            </label>
-    
-            <label for = "rngElements" class = "uiTextElement uiTextContainer interactable">
-                # Elements
-                <input type = "range" id = "rngElements" min = "10" max = "1000" step = "5" value = "25" >
             </label>
 
         </div>
