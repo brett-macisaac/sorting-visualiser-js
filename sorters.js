@@ -149,36 +149,62 @@ async function InsertionSort(aElements, aAscending)
 
         // Remove colours.
         aElements.SetElementRangeColour(0, lIndexUnsortedMin, aElements.colours.default);
-        
-        // The index below that at which lValueToInsert will be inserted ('m1' means 'minus 1').
-        let lIndexOfInsertM1 = lIndexUnsortedMin - 1;
- 
-        /* Shift the elements of the sorted segment ( [0, lIndexUnsortedMin - 1] ) that are greated than 
-           lValueToInsert one index/position up, which makes space for lValueToInsert to be inserted.  */
-        while (lIndexOfInsertM1 >= 0 && await aElements.CompareValue(lIndexOfInsertM1, lOperator, lValueToInsert))
+
+        // The index of the sublist at which lValueToInsert will be inserted.
+        let lIndexOfInsert = lIndexUnsortedMin;
+
+        for (; lIndexOfInsert > 0 && await aElements.CompareValue(lIndexOfInsert - 1, lOperator, lValueToInsert); 
+             --lIndexOfInsert)
         {
-            // Shift the value at index lIndexOfInsertM1 one index up.
-            aElements.SetHeight(lIndexOfInsertM1 + 1, aElements.GetHeight(lIndexOfInsertM1));
-            
+            aElements.SetHeight(lIndexOfInsert, aElements.GetHeight(lIndexOfInsert - 1));
+
             // Record the shift.
             ++lNumShifts;
-            
-            // Decrement the insertion index.
-            --lIndexOfInsertM1;
         }
-        
-        // Insert lValueToInsert at the insertion index.
-        aElements.SetHeight(lIndexOfInsertM1 + 1, `${lValueToInsert}px`);
-        
+
+        aElements.SetHeight(lIndexOfInsert, `${lValueToInsert}px`);
+
         // Highlight the value that was inserted.
-        await aElements.SetElementColour(lIndexOfInsertM1 + 1, aElements.colours.compared, false);
+        await aElements.SetElementColour(lIndexOfInsert, aElements.colours.compared, false);
         
         // Highlight the values that were shifted up to accomodate for the value that was inserted.
-        await aElements.SetElementRangeColour(lIndexOfInsertM1 + 2, lIndexOfInsertM1 + 1 + lNumShifts, aElements.colours.swapped, true);
+        await aElements.SetElementRangeColour(lIndexOfInsert + 1, lIndexOfInsert + lNumShifts, aElements.colours.swapped, true);
         
         // Remove the highlights.
         //aElements.SetBarColour(lIndexOfInsertM1 + 1, BarColourEnum.Standard, false);
-        await aElements.SetElementRangeColour(lIndexOfInsertM1 + 1, lIndexOfInsertM1 + 1 + lNumShifts, aElements.colours.default, false);
+        await aElements.SetElementRangeColour(lIndexOfInsert, lIndexOfInsert + lNumShifts, aElements.colours.default, false);
+        
+
+        // Alternate form (while loop instead of for).
+        // // The index below that at which lValueToInsert will be inserted ('m1' means 'minus 1').
+        // let lIndexOfInsertM1 = lIndexUnsortedMin - 1;
+ 
+        // /* Shift the elements of the sorted segment ( [0, lIndexUnsortedMin - 1] ) that are greated than 
+        //    lValueToInsert one index/position up, which makes space for lValueToInsert to be inserted.  */
+        // while (lIndexOfInsertM1 >= 0 && await aElements.CompareValue(lIndexOfInsertM1, lOperator, lValueToInsert))
+        // {
+        //     // Shift the value at index lIndexOfInsertM1 one index up.
+        //     aElements.SetHeight(lIndexOfInsertM1 + 1, aElements.GetHeight(lIndexOfInsertM1));
+            
+        //     // Record the shift.
+        //     ++lNumShifts;
+            
+        //     // Decrement the insertion index.
+        //     --lIndexOfInsertM1;
+        // }
+        
+        // // Insert lValueToInsert at the insertion index.
+        // aElements.SetHeight(lIndexOfInsertM1 + 1, `${lValueToInsert}px`);
+        
+        // // Highlight the value that was inserted.
+        // await aElements.SetElementColour(lIndexOfInsertM1 + 1, aElements.colours.compared, false);
+        
+        // // Highlight the values that were shifted up to accomodate for the value that was inserted.
+        // await aElements.SetElementRangeColour(lIndexOfInsertM1 + 2, lIndexOfInsertM1 + 1 + lNumShifts, aElements.colours.swapped, true);
+        
+        // // Remove the highlights.
+        // //aElements.SetBarColour(lIndexOfInsertM1 + 1, BarColourEnum.Standard, false);
+        // await aElements.SetElementRangeColour(lIndexOfInsertM1 + 1, lIndexOfInsertM1 + 1 + lNumShifts, aElements.colours.default, false);
         
         // Clear the number of shifts.
         lNumShifts = 0;
@@ -701,6 +727,75 @@ async function HeapSort(aElements, aAscending)
 
 }
 
+async function ShellSort(aElements, aAscending)
+{
+    // source: https://www.geeksforgeeks.org/shellsort/
+
+    // The operator to use in the while loop's condition.
+    const lOperator = aAscending ? utils.CompOps.G : utils.CompOps.L;
+
+    let n = aElements.length;
+  
+    /*
+    * Perform insertion sort on all sublists of aElements where each sublist is comprised of elements of aElements that
+      are 'gap' indexes apart from each other.
+    */
+    for (let gap = Math.floor(n/2); gap > 0; gap = Math.floor(gap / 2))
+    {
+        // The maximum index (which is an index of aElements) of the current sublist.
+        let lIndexMaxSubList = gap;
+
+        /*
+        * Each iteration of this for loop performs an insertion sort on one of the sublists. 
+        * A sublist's size, given by lIndexMaxSubList, is increased by 1 every time it is iterated over.
+        * Each successive iteration of the loop focuses on a different sublist. Each sublist is iterated over several 
+          times (equal to its (final) length minus 1).
+        * Each sublist mustn't contain the same element as another sublist.
+        * The number of elements in a sublist is, at most, n / gap (s = n /gap); the number of sublists is n / s.
+        */
+        for (; lIndexMaxSubList < n; ++lIndexMaxSubList)
+        {
+            const lValueToInsert = aElements.GetClientHeight(lIndexMaxSubList); //= arr[i];
+
+            // The index of the sublist at which lValueToInsert will be inserted.
+            let lIndexOfInsert = lIndexMaxSubList;
+
+            // The lowest index of the sublist.
+            let lIndexMinSublist = lIndexMaxSubList % gap;
+
+            for (; lIndexOfInsert > lIndexMinSublist && await aElements.CompareValue(lIndexOfInsert - gap, lOperator, lValueToInsert); 
+                   lIndexOfInsert -= gap)
+            {
+                aElements.SetHeight(lIndexOfInsert, aElements.GetHeight(lIndexOfInsert - gap));
+            }
+
+            aElements.SetHeight(lIndexOfInsert, `${lValueToInsert}px`);
+
+            // Alternate form (while loop instead of for).
+            // // The index of the sublist below which lValueToInsert will be inserted.
+            // let lIndexOfInsertMgap = lIndexMaxSubList - gap;
+
+            // // The lowest index of the sublist.
+            // let lIndexMinSublist = lIndexMaxSubList % gap;
+
+            // // While the lIndexOfInsertMgap is still valid and the next element of the sublist is higher/greater than the value to insert.
+            // while(lIndexOfInsertMgap >= lIndexMinSublist && await aElements.CompareValue(lIndexOfInsertMgap, lOperator, lValueToInsert))
+            // {
+            //     // Shift the value at index lIndexOfInsertMgap one gap up.
+            //     aElements.SetHeight(lIndexOfInsertMgap + gap, aElements.GetHeight(lIndexOfInsertMgap));
+                
+            //     // Decrement the insertion index.
+            //     lIndexOfInsertMgap -= gap;
+            // }
+
+            // aElements.SetHeight(lIndexOfInsertMgap + gap, `${lValueToInsert}px`);
+        }
+
+    }
+
+    aElements.SetElementRangeColour(0, aElements.length - 1, aElements.colours.sorted, true);
+}
+
 const Sorters = 
 {
     "Bubble Sort": BubbleSort,
@@ -711,7 +806,8 @@ const Sorters =
     "Quick Sort (Random)": QuickSortRandomPivot,
     "Merge Sort": MergeSort,
     "Merge Sort (Iterative)": MergeSortIterative,
-    "Heap Sort": HeapSort
+    "Heap Sort": HeapSort,
+    "Shell Sort": ShellSort
 };
 
 export { Sorters as default };
