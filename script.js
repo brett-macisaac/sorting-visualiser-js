@@ -64,7 +64,7 @@ function CreateElements(aNumElements)
 
     // The min and max number of elements: (lMinElements, lMaxElements].
     const lMinElements = 10;
-    const lMaxElements = 1000;
+    const lMaxElements = 250;
 
     // Validate aNumElements's size.
     if (aNumElements < lMinElements || aNumElements > lMaxElements)
