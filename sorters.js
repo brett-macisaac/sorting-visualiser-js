@@ -9,6 +9,9 @@ async function BubbleSort(aElements, aAscending)
     {
         for (let i = 1; i <= lIndexUnsortedUpper; ++i)
         {
+            if (aElements.stop)
+                return;
+
             if (await aElements.Compare(i - 1, lCompOp, i))
             {
                 await aElements.Swap(i - 1, i);
@@ -55,6 +58,9 @@ async function CocktailShakerSort(aElements, aAscending)
         */
         for (let i = lIndexUnsortedLower; i < lIndexUnsortedUpper; ++i) // Min to max (ascend).
         {
+            if (aElements.stop)
+                return;
+
             if (await aElements.Compare(i, lCompOpLowToHigh, i + 1, true))
             {
                 await aElements.Swap(i, i + 1);
@@ -70,6 +76,9 @@ async function CocktailShakerSort(aElements, aAscending)
         */
         for (let i = lIndexUnsortedUpper; i > lIndexUnsortedLower; --i) // Max to min (descend).
         {
+            if (aElements.stop)
+                return;
+
             if (await aElements.Compare(i, lCompOpHighToLow, i - 1, true))
             { 
                 await aElements.Swap(i, i - 1, true);
@@ -104,6 +113,9 @@ async function SelectionSort(aElements, aAscending)
 
         for (let i = 1; i <= lIndexUnsortedUpper; ++i)
         {
+            if (aElements.stop)
+                return;
+            
             if (await aElements.Compare(i, lCompOp, lIndexElementToSwap))
             {
                 lIndexElementToSwap = i;
@@ -156,6 +168,9 @@ async function InsertionSort(aElements, aAscending)
         for (; lIndexOfInsert > 0 && await aElements.CompareValue(lIndexOfInsert - 1, lOperator, lValueToInsert); 
              --lIndexOfInsert)
         {
+            if (aElements.stop)
+                return;
+
             aElements.SetHeight(lIndexOfInsert, aElements.GetHeight(lIndexOfInsert - 1));
 
             // Record the shift.
@@ -240,7 +255,10 @@ async function QuickSort(aElements, aAscending)
         await aElements.SetElementColour(lIndexOfSort, lColourSortIndex, true);
 
         for (let i = aStart; i < aEnd; ++i)
-        {   
+        {
+            if (aElements.stop)
+                return;
+
             if (await aElements.Compare(lIndexPivot, lOperator, i))
             {
                 // Swap current value with the one at lIndexOfSort.
@@ -271,12 +289,18 @@ async function QuickSort(aElements, aAscending)
 
     const SplitElements = async (aElements, aStart, aEnd) => 
     {
+        if (aElements.stop) return;
+
         if (aStart < aEnd)
         {
             const lIndexSortedValue = await SortValue(aElements, aStart, aEnd);
 
+            if (aElements.stop) return;
+
             // Highlight the lower segment.
             await aElements.SetElementRangeColour(aStart, lIndexSortedValue - 1, aElements.colours.compared, false);
+
+            if (aElements.stop) return;
 
             // Highlight the upper segment.
             await aElements.SetElementRangeColour(lIndexSortedValue + 1, aEnd, aElements.colours.swapped, true);
@@ -336,6 +360,9 @@ async function QuickSortRandomPivot(aElements, aAscending)
 
         for (let i = aStart; i < aEnd; ++i)
         {   
+            if (aElements.stop)
+                return;
+
             if (await aElements.Compare(lIndexPivot, lOperator, i))
             {
                 // Swap current value with the one at lIndexOfSort.
@@ -366,12 +393,18 @@ async function QuickSortRandomPivot(aElements, aAscending)
 
     const SplitElements = async (aElements, aStart, aEnd) => 
     {
+        if (aElements.stop) return;
+
         if (aStart < aEnd)
         {
             const lIndexSortedValue = await SortValue(aElements, aStart, aEnd);
 
+            if (aElements.stop) return;
+
             // Highlight the lower segment.
             await aElements.SetElementRangeColour(aStart, lIndexSortedValue - 1, aElements.colours.compared, false);
+
+            if (aElements.stop) return;
 
             // Highlight the upper segment.
             await aElements.SetElementRangeColour(lIndexSortedValue + 1, aEnd, aElements.colours.swapped, true);
@@ -404,6 +437,9 @@ async function MergeSort(aElements, aAscending)
 
     const Merge = async (aElements, aStart, aMid, aEnd) =>
     {
+        if (aElements.stop)
+            return;
+
         // Change the colours of the two segments.
         aElements.SetElementRangeColour(aStart, aMid, lColourLower, false);
         await aElements.SetElementRangeColour(aMid + 1, aEnd, lColourUpper, true);
@@ -425,6 +461,9 @@ async function MergeSort(aElements, aAscending)
         // The purpose of this while loop is to populate lMerger with all elements from lower and upper segments.
         while (true) // (c).
         {
+            if (aElements.stop)
+                return;
+
             if (lIndexLowerSegment <= aMid && lIndexUpperSegment <= aEnd) // (d).
             {
                 if (await aElements.Compare(lIndexLowerSegment, lOperator, lIndexUpperSegment, true)) // (e).
@@ -459,6 +498,9 @@ async function MergeSort(aElements, aAscending)
         // Copy the values from lMerger into the appropriate indexes of aElements.
         for (let i = aStart; i <= aEnd; ++i) 
         { 
+            if (aElements.stop)
+                return;
+
             aElements.SetHeight(i, lMerger[i - aStart]);
             await aElements.SetElementColour(i, lColourMerged, true);
         }
@@ -474,6 +516,9 @@ async function MergeSort(aElements, aAscending)
         
         // Calculate the middle index.
         let lMid = Math.floor((aStart + aEnd) / 2);
+
+        if (aElements.stop)
+            return;
         
         // Highlight the lower segment (the segment that is about to be split).
         aElements.SetElementRangeColour(aStart, lMid, lColourLower);
@@ -487,6 +532,9 @@ async function MergeSort(aElements, aAscending)
         // Split and merge the lower half of the current segment (aStart to lMid).
         // Once this returns, said lower half will have been sorted.
         await SplitAndMerge(aElements, aStart, lMid);
+
+        if (aElements.stop)
+            return;
 
         // Highlight the lower segment (the segment that is about to be split).
         aElements.SetElementRangeColour(aStart, lMid, lColourLower);
@@ -503,7 +551,6 @@ async function MergeSort(aElements, aAscending)
         
         // Combine the lower (aStart to lMid) and upper (lMid + 1 to aEnd) segments which, individually, are sorted.
         await Merge(aElements, aStart, lMid, aEnd);
-
     }
 
     await SplitAndMerge(aElements, 0, aElements.length - 1);
@@ -521,9 +568,13 @@ async function MergeSortIterative(aElements, aAscending)
 
     const Merge = async (aElements, aStart, aMid, aEnd) =>
     {
+        if (aElements.stop) return;
+
         // Change the colours of the two segments.
         aElements.SetElementRangeColour(aStart, aMid, lColourLower, false);
         await aElements.SetElementRangeColour(aMid + 1, aEnd, lColourUpper, true);
+
+        if (aElements.stop) return;
 
         // Remove the colours.
         await aElements.SetElementRangeColour(aStart, aEnd, aElements.colours.default, true);
@@ -542,6 +593,8 @@ async function MergeSortIterative(aElements, aAscending)
         // The purpose of this while loop is to populate lMerger with all elements from lower and upper segments.
         while (true) // (c).
         {
+            if (aElements.stop) return;
+
             if (lIndexLowerSegment <= aMid && lIndexUpperSegment <= aEnd) // (d).
             {
                 if (await aElements.Compare(lIndexLowerSegment, lOperator, lIndexUpperSegment, true)) // (e).
@@ -576,6 +629,8 @@ async function MergeSortIterative(aElements, aAscending)
         // Copy the values from lMerger into the appropriate indexes of aElements.
         for (let i = aStart; i <= aEnd; ++i) 
         { 
+            if (aElements.stop) return;
+
             aElements.SetHeight(i, lMerger[i - aStart]);
             await aElements.SetElementColour(i, lColourMerged, true);
         }
@@ -619,6 +674,8 @@ async function MergeSortIterative(aElements, aAscending)
 
             // Combine the lower (lStart to lMid) and upper (lMid + 1 to lEnd) halves of the current segment.
             await Merge(aElements, l_start, l_mid, l_end);
+
+            if (aElements.stop) return;
         }
         
     }
@@ -711,15 +768,23 @@ async function HeapSort(aElements, aAscending)
 
     for (let i = lIndexLowestParentNode; i >= 0; --i)
     {
+        if (aElements.stop) return;
+
         aAscending ? await MaxHeapify(aElements, aElements.length - 1, i) : 
                      await MinHeapify(aElements, aElements.length - 1, i);
     }
 
     for (let lIndexLastNode = aElements.length - 1; lIndexLastNode >= 0;)
     {
+        if (aElements.stop) return;
+
         await aElements.Swap(0, lIndexLastNode, true);
+
+        if (aElements.stop) return;
         
         await aElements.SetElementSorted(lIndexLastNode, true);
+
+        if (aElements.stop) return;
 
         aAscending ? await MaxHeapify(aElements, --lIndexLastNode, 0) : 
                      await MinHeapify(aElements, --lIndexLastNode, 0);     
@@ -766,29 +831,12 @@ async function ShellSort(aElements, aAscending)
             for (; lIndexOfInsert > lIndexMinSublist && await aElements.CompareValue(lIndexOfInsert - gap, lOperator, lValueToInsert); 
                    lIndexOfInsert -= gap)
             {
+                if (aElements.stop) return;
+
                 aElements.SetHeight(lIndexOfInsert, aElements.GetHeight(lIndexOfInsert - gap));
             }
 
             aElements.SetHeight(lIndexOfInsert, `${lValueToInsert}px`);
-
-            // Alternate form (while loop instead of for).
-            // // The index of the sublist below which lValueToInsert will be inserted.
-            // let lIndexOfInsertMgap = lIndexMaxSubList - gap;
-
-            // // The lowest index of the sublist.
-            // let lIndexMinSublist = lIndexMaxSubList % gap;
-
-            // // While the lIndexOfInsertMgap is still valid and the next element of the sublist is higher/greater than the value to insert.
-            // while(lIndexOfInsertMgap >= lIndexMinSublist && await aElements.CompareValue(lIndexOfInsertMgap, lOperator, lValueToInsert))
-            // {
-            //     // Shift the value at index lIndexOfInsertMgap one gap up.
-            //     aElements.SetHeight(lIndexOfInsertMgap + gap, aElements.GetHeight(lIndexOfInsertMgap));
-                
-            //     // Decrement the insertion index.
-            //     lIndexOfInsertMgap -= gap;
-            // }
-
-            // aElements.SetHeight(lIndexOfInsertMgap + gap, `${lValueToInsert}px`);
         }
 
     }

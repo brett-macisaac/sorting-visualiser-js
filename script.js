@@ -3,44 +3,53 @@ import utils from "./utils.js";
 import Elements from "./Elements.js";
 import sorters from "./sorters.js";
 
+
+// Globals (7) =========================================================================================================
+
+let gElements;
+
+/*
+* The original width (in px) of the elements' container object. This should be retained due to the user's ability to
+  alter the number of elements, which may alter the container's width.
+*/
+const gWidthElementsOriginal = window.getComputedStyle(document.getElementById("elements")).width;
+
+const gBtnSort = document.getElementById("btnSort");
+const gBtnShuffle = document.getElementById("btnShuffle");
+const gChkAscending = document.getElementById("chkAscending");
+const gCmbSorters = document.getElementById("cmbSorters");
+const gRngNumElements = document.getElementById("rngElements");
+
+const gPrimaryControls = [ gBtnSort, gBtnShuffle, gChkAscending, gCmbSorters, gRngNumElements ];
+
+
+// Functions (1) =======================================================================================================
+
 /*
 * This function is called when the browser loads the window.
 * It performs initial actions that must be made when the web app runs.
 */
 function init()
 {
-    document.getElementById("btnSort").onclick = SortElements;
-    document.getElementById("btnShuffle").onclick = ShuffleElements;
-    document.getElementById("rngElements").onchange = SetNumElements;
+    gBtnSort.onclick = SortElements;
+    gBtnShuffle.onclick = ShuffleElements;
+    gRngNumElements.onchange = SetNumElements;
 
-    CreateElements(Number(document.getElementById("rngElements").value));
+    const lBtnStop = document.getElementById("btnStop");
+
+    lBtnStop.onclick = Stop;
+
+    CreateElements(Number(gRngNumElements.value));
+
+    gElements = new Elements(document.getElementsByClassName("element"), lBtnStop, document.getElementById("btnStep"), 
+                             document.getElementById("chkStep"), document.getElementById("rngSpeed"),
+                             document.querySelector("div#statAccesses > span"), 
+                             document.querySelector("div#statWrites > span"));
 
     PopulateComboBox();
 }
 window.onload = init; // Call init when the browser loads the window.
 //init();
-
-
-// Globals (X) =========================================================================================================
-
-const gElements = new Elements(document.getElementsByClassName("element"), document.getElementById("btnStep"), 
-                               document.getElementById("chkStep"), document.getElementById("rngSpeed"),
-                               document.querySelector("div#statAccesses > span"), 
-                               document.querySelector("div#statWrites > span"));
-
-// The original width (in px) of the elements' container object. This should be retained due to the user's ability to
-// alter the number of elements, which may alter the container's width.
-const gWidthElementsOriginal = window.getComputedStyle(document.getElementById("elements")).width;
-
-const gBtnSort = document.getElementById("btnSort");
-
-const gBtnShuffle = document.getElementById("btnShuffle");
-
-const gChkAscending = document.getElementById("chkAscending");
-
-const gCmbSorters = document.getElementById("cmbSorters");
-
-const gRngNumElements = document.getElementById("rngElements");
 
 
 // Auxiliaries (X) =====================================================================================================
@@ -192,7 +201,7 @@ function PopulateComboBox()
 */
 async function SortElements()
 {
-    DisableUIForSorting(true);
+    ToggleUIDisabled(true);
 
     //const lElements = document.getElementsByClassName("element");
 
@@ -200,7 +209,7 @@ async function SortElements()
 
     await gElements.Sort(sorters[gCmbSorters.options[gCmbSorters.selectedIndex].text], gChkAscending.checked);
 
-    DisableUIForSorting(false);
+    ToggleUIDisabled(false);
 }
 
 /* Auxiliary of init
@@ -208,18 +217,23 @@ async function SortElements()
 */
 async function ShuffleElements()
 {
-    DisableUIForSorting(true);
+    ToggleUIDisabled(true);
 
     await gElements.Shuffle();
 
-    DisableUIForSorting(false);
+    ToggleUIDisabled(false);
 }
 
-function DisableUIForSorting(aDisabled)
+function Stop()
 {
-    gChkAscending.disabled = aDisabled;
-    gBtnSort.disabled = aDisabled;
-    gBtnShuffle.disabled = aDisabled;
-    gCmbSorters.disabled = aDisabled;
-    gRngNumElements.disabled = aDisabled;
+    gElements.Stop();
+}
+
+function ToggleUIDisabled(aDisabled)
+{
+    for (let i = 0; i < gPrimaryControls.length; ++i)
+    {
+        gPrimaryControls[i].disabled = !gPrimaryControls[i].disabled;
+    }
+
 }

@@ -3,9 +3,10 @@ import utils from "./utils.js";
 
 class Elements
 {
-    constructor(aElements, aBtnStep, aChkStep, aRngSpeed, aLblAccesses, aLblWrites)
+    constructor(aElements, aBtnStop, aBtnStep, aChkStep, aRngSpeed, aLblAccesses, aLblWrites)
     {
         this._elements = aElements;
+        this._btnStop = aBtnStop;
         this._btnStep = aBtnStep;
         this._chkStep = aChkStep;
         this._rngSpeed = aRngSpeed;
@@ -14,6 +15,10 @@ class Elements
 
         // A stand-in value for a scroll bar that will eventually be used to determine the sleep length.
         this._sleepLength = 1;
+
+        // A flag that, when true, indicates that the current process (sort or shuffle), should stop.
+        this._stopProcess = false;
+
 
         this._elementColours = 
         {
@@ -33,15 +38,20 @@ class Elements
     */
     async Sort(aSorter, aAscending)
     {
-        this.ResetAccessesAndWrites();
+        this.Reset();
 
         await aSorter(this, aAscending);
+
+        this.ResetElementsColour();
     }
 
     async Shuffle()
     {
         for (let i = this._elements.length - 1; i > 0; --i)
         {
+            if (this._stopProcess)
+                break;
+
             const lIndexRandom = utils.GetRandom(0, i);
 
             this.Swap(i, lIndexRandom, false);
@@ -50,7 +60,12 @@ class Elements
 
         this.ResetElementsColour();
 
-        this.ResetAccessesAndWrites()
+        this.Reset()
+    }
+
+    Stop()
+    {
+        this._stopProcess = true;
     }
 
     async Compare(aIndex1, aCompOp, aIndex2)
@@ -197,7 +212,7 @@ class Elements
     SleepOrStep()
     {
         if (this._chkStep.checked)
-            return utils.SleepUntilClicks([this._btnStep, this._chkStep]);
+            return utils.SleepUntilClicks([this._btnStop, this._btnStep, this._chkStep]);
         else
             return utils.SleepFor(Number(this._rngSpeed.value));
     }
@@ -220,10 +235,11 @@ class Elements
         this._lblWrites.innerText = lCurrentValue;
     }
 
-    ResetAccessesAndWrites()
+    Reset()
     {
         this._lblAccesses.innerText = 0;
         this._lblWrites.innerText = 0;
+        this._stopProcess = false;
     }
 
     GetClientHeight(aIndex)
@@ -260,6 +276,11 @@ class Elements
     get elements()
     {
         return this._elements;
+    }
+
+    get stop()
+    {
+        return this._stopProcess
     }
 
 }
